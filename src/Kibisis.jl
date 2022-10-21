@@ -211,24 +211,24 @@ Maps an item that is put in an `LRUSet` to a `Float64`
 that represents the size it adds to the cache. Define this 
 method for your own types if you need something different than `1.0`
 """
-item_size(::Any) = 1.0
+item_size(::Any, ::Vararg) = 1.0
 
 """
 Function executes on item when it enters LRUSet and was not there before. 
 Executes before size of cache is updated.
 """
-on_new_push(::Any) = nothing
+on_new_push(::Any, ::Vararg) = nothing
 
 """
 Function executes on item when it is used in an LRUSet when it already existed
 """
-on_old_push(::Any) = nothing
+on_old_push(::Any, ::Vararg) = nothing
 
 """
 Function executes on item when it is removed from the LRUSet (before any other removals).
 Executes after size of cache is updated
 """
-on_pop(::Any) = nothing
+on_pop(::Any, ::Vararg) = nothing
 
 """
 Pushes `item` into the `LRUSet` (potentially pushing `size` over `capacity` temporarily), 
@@ -237,19 +237,19 @@ pushed in). Returns a `Vector` of the vacated items. First item in the `Vector` 
 item vacated (i.e earlier in the `Vector` means less recently used). If the `item` already exists
 then it is moved to the front of the `LRUSet`. 
 """
-pushpop!(lru::LRUSet{T}, item::T) where T = begin
+pushpop!(lru::LRUSet{T}, item::T, metadata::Vararg) where T = begin
     # Check if item already exists
     if item in keys(lru.hash_map)
         unsafe_move_to_front!(lru.linked_list, lru.hash_map[item])
-        on_old_push(item)
+        on_old_push(item, metadata)
         return Vector{T}()
     end
     
     # Push item into linked list and hash map
     item_node = _pushfirst!(lru.linked_list, item)
     push!(lru.hash_map, item => item_node)
-    on_new_push(item)
-    lru.size += item_size(item)
+    on_new_push(item, metadata)
+    lru.size += item_size(item, metadata)
     
 
     # Remove items from the cache to meet capacity
@@ -258,8 +258,8 @@ pushpop!(lru::LRUSet{T}, item::T) where T = begin
         popped_item = pop!(lru.linked_list)
         pop!(lru.hash_map, popped_item)
         push!(removed_items, popped_item)
-        lru.size -= item_size(popped_item)
-        on_pop(popped_item)
+        lru.size -= item_size(popped_item, metadata)
+        on_pop(popped_item, metadata)
     end
     
     removed_items
