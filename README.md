@@ -26,7 +26,7 @@ end
 ```
 
 # LRUSet
-Pandora provides an implementation of a set using LRU semantics in `LRUSet{T}`. When the size of the set grows larger than the set's capcity items are vacated. Insertion, membership queries, and iteration in order of most recently used are all fast. The type parameter `T` is the type of the elements in the list. 
+Pandora provides an implementation of a set using LRU semantics in `LRUSet{T}`. When the size of the set grows larger than the set's capcity items are vacated. Insertion, membership queries, and iteration in order of most recently used are all fast. The type parameter `T` is the type of the elements in the set. 
 
 ## Usage
 ```
