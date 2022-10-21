@@ -251,7 +251,6 @@ pushpop!(lru::LRUSet{T}, item::T, metadata::Vararg) where T = begin
     on_new_push(item, metadata)
     lru.size += item_size(item, metadata)
     
-
     # Remove items from the cache to meet capacity
     removed_items = Vector{T}()
     while lru.size > lru.capacity 
