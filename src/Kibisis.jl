@@ -214,7 +214,8 @@ method for your own types if you need something different than `1.0`
 item_size(::Any) = 1.0
 
 """
-Function executes on item when it enters LRUSet and was not there before
+Function executes on item when it enters LRUSet and was not there before. 
+Executes before size of cache is updated.
 """
 on_new_push(::Any) = nothing
 
@@ -224,7 +225,8 @@ Function executes on item when it is used in an LRUSet when it already existed
 on_old_push(::Any) = nothing
 
 """
-Function executes on item when it is removed from the LRUSet (before any other removals)
+Function executes on item when it is removed from the LRUSet (before any other removals).
+Executes before size of cache is updated
 """
 on_pop(::Any) = nothing
 
@@ -246,8 +248,9 @@ pushpop!(lru::LRUSet{T}, item::T) where T = begin
     # Push item into linked list and hash map
     item_node = _pushfirst!(lru.linked_list, item)
     push!(lru.hash_map, item => item_node)
-    lru.size += item_size(item)
     on_new_push(item)
+    lru.size += item_size(item)
+    
 
     # Remove items from the cache to meet capacity
     removed_items = Vector{T}()
@@ -255,8 +258,8 @@ pushpop!(lru::LRUSet{T}, item::T) where T = begin
         popped_item = pop!(lru.linked_list)
         pop!(lru.hash_map, popped_item)
         push!(removed_items, popped_item)
-        lru.size -= item_size(popped_item)
         on_pop(popped_item)
+        lru.size -= item_size(popped_item)
     end
     
     removed_items
