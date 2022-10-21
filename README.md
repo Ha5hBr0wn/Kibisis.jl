@@ -1,12 +1,12 @@
 # DoublyLinkedList
-Pandora provides a doubly linked list implementation with `DoublyLinkedList{T}`. This 
+Kibisis provides a doubly linked list implementation with `DoublyLinkedList{T}`. This 
 data type supports fast insertion at both ends as well as fast iteration. The type parameter `T` is the type of elements in the list. 
 
 ## Usage
 ```
-using Pandora
+using Kibisis
 
-ll = Pandora.DoublyLinkedList{Int64}()
+ll = Kibisis.DoublyLinkedList{Int64}()
 
 push!(ll, 10) # Adds 10 to the back of the list
 length(ll) # Returns 1, the number of items in the list
@@ -26,20 +26,20 @@ end
 ```
 
 # LRUSet
-Pandora provides an implementation of a set using LRU semantics in `LRUSet{T}`. When the size of the set grows larger than the set's capcity items are vacated. Insertion, membership queries, and iteration in order of most recently used are all fast. The type parameter `T` is the type of the elements in the set. 
+Kibisis provides an implementation of a set using LRU semantics in `LRUSet{T}`. When the size of the set grows larger than the set's capcity items are vacated. Insertion, membership queries, and iteration in order of most recently used are all fast. The type parameter `T` is the type of the elements in the set. 
 
 ## Usage
 ```
-using Pandora
+using Kibisis
 
-lru = Pandora.LRUSet{Int64}(3) # Creates an LRUSet with capacity 3
+lru = Kibisis.LRUSet{Int64}(3) # Creates an LRUSet with capacity 3
 
-Pandora.pushpop!(lru, 1) # Inserts 1
-Pandora.pushpop!(lru, 2) # Inserts 2
-Pandora.pushpop!(lru, 3) # Inserts 3
-Pandora.pushpop!(lru, 1) # Moves 1 to being recently used
+Kibisis.pushpop!(lru, 1) # Inserts 1
+Kibisis.pushpop!(lru, 2) # Inserts 2
+Kibisis.pushpop!(lru, 3) # Inserts 3
+Kibisis.pushpop!(lru, 1) # Moves 1 to being recently used
 
-popped_items::Vector{Int64} = Pandora.pushpop!(lru, 4) # Inserts 4, vacates 2
+popped_items::Vector{Int64} = Kibisis.pushpop!(lru, 4) # Inserts 4, vacates 2
 
 popped_items == [2] # true
 2 in lru # false
@@ -54,17 +54,17 @@ length(lru) # Returns 3, the number of elements in the set
 ```
 
 ## Advanced Usage
-By default the size of an item in the set is 1. However you can customize that behavior by adding a method to `Pandora.item_size(x)` for your type of element. The method should take in the item and return a `Float64` object corresponding to its size.
+By default the size of an item in the set is 1. However you can customize that behavior by adding a method to `Kibisis.item_size(x)` for your type of element. The method should take in the item and return a `Float64` object corresponding to its size.
 
 ```
-using Pandora
+using Kibisis
 
-Pandora.item_size(x::Int64) = convert(Float64, x)
+Kibisis.item_size(x::Int64) = convert(Float64, x)
 
-lru = Pandora.LRUSet{Int64}(3) # Creates an LRUSet with capacity 3
+lru = Kibisis.LRUSet{Int64}(3) # Creates an LRUSet with capacity 3
 
-Pandora.pushpop!(lru, 1)
-popped_items = Pandora.pushpop!(lru, 4)
+Kibisis.pushpop!(lru, 1)
+popped_items = Kibisis.pushpop!(lru, 4)
 
 popped_items == [1, 4] # true
 ```

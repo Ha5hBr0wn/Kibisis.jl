@@ -1,4 +1,4 @@
-module Pandora
+module Kibisis
 
 ################### using statements #####################
 

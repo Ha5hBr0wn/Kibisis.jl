@@ -1,8 +1,8 @@
-using Pandora
+using Kibisis
 using Test
 
 @testset "linked list" begin
-    ll = Pandora.DoublyLinkedList{Int64}()
+    ll = Kibisis.DoublyLinkedList{Int64}()
     
     @test length(ll) == 0
     @test ll.size == 0
@@ -89,9 +89,9 @@ end;
 
 
 @testset "lru set" begin
-    lru = Pandora.LRUSet{Int64}(10.0)
+    lru = Kibisis.LRUSet{Int64}(10.0)
 
-    Pandora.item_size(x::Int64) = convert(Float64, x)
+    Kibisis.item_size(x::Int64) = convert(Float64, x)
 
     @test length(lru) == 0
     @test lru.size == 0.0
@@ -100,7 +100,7 @@ end;
     @test_throws ErrorException 10.0 in lru
     @test (10 in lru) == false
 
-    popped_values = Pandora.pushpop!(lru, 10)
+    popped_values = Kibisis.pushpop!(lru, 10)
 
     @test typeof(popped_values) === Vector{Int64}
     @test popped_values == []
@@ -109,14 +109,14 @@ end;
     @test lru.capacity == 10.0
     @test (10 in lru) == true
 
-    popped_values = Pandora.pushpop!(lru, 10)
+    popped_values = Kibisis.pushpop!(lru, 10)
 
     @test popped_values == []
     @test length(lru) == 1
     @test lru.size == 10.0
     @test (10 in lru) == true
 
-    popped_values = Pandora.pushpop!(lru, 11)
+    popped_values = Kibisis.pushpop!(lru, 11)
 
     @test popped_values == [10, 11]
     @test length(lru) == 0
@@ -124,11 +124,11 @@ end;
     @test (11 in lru) == false
     @test (10 in lru) == false
 
-    Pandora.pushpop!(lru, 2)
-    Pandora.pushpop!(lru, 5)
-    Pandora.pushpop!(lru, 3)
-    Pandora.pushpop!(lru, 2)
-    popped_values = Pandora.pushpop!(lru, 8)
+    Kibisis.pushpop!(lru, 2)
+    Kibisis.pushpop!(lru, 5)
+    Kibisis.pushpop!(lru, 3)
+    Kibisis.pushpop!(lru, 2)
+    popped_values = Kibisis.pushpop!(lru, 8)
 
     @test popped_values == [5, 3]
     @test length(lru) == 2
@@ -138,7 +138,7 @@ end;
     @test (2 in lru) == true
     @test (8 in lru) == true
 
-    popped_values = Pandora.pushpop!(lru, 3)
+    popped_values = Kibisis.pushpop!(lru, 3)
 
     @test popped_values == [2, 8]
     @test length(lru) == 1
@@ -147,9 +147,9 @@ end;
     @test (8 in lru) == false
     @test (2 in lru) == false
 
-    Pandora.pushpop!(lru, 2)
-    Pandora.pushpop!(lru, 3)
-    Pandora.pushpop!(lru, 1)
+    Kibisis.pushpop!(lru, 2)
+    Kibisis.pushpop!(lru, 3)
+    Kibisis.pushpop!(lru, 1)
 
     v = Vector{Int64}()
     for item in lru
