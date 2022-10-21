@@ -226,7 +226,7 @@ on_old_push(::Any) = nothing
 
 """
 Function executes on item when it is removed from the LRUSet (before any other removals).
-Executes before size of cache is updated
+Executes after size of cache is updated
 """
 on_pop(::Any) = nothing
 
@@ -258,8 +258,8 @@ pushpop!(lru::LRUSet{T}, item::T) where T = begin
         popped_item = pop!(lru.linked_list)
         pop!(lru.hash_map, popped_item)
         push!(removed_items, popped_item)
-        on_pop(popped_item)
         lru.size -= item_size(popped_item)
+        on_pop(popped_item)
     end
     
     removed_items
