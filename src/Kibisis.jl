@@ -211,7 +211,22 @@ Maps an item that is put in an `LRUSet` to a `Float64`
 that represents the size it adds to the cache. Define this 
 method for your own types if you need something different than `1.0`
 """
-item_size(x) = 1.0
+item_size(::Any) = 1.0
+
+"""
+Function executes on item when it enters LRUSet and was not there before
+"""
+on_new_push(::Any) = nothing
+
+"""
+Function executes on item when it is used in an LRUSet when it already existed
+"""
+on_old_push(::Any) = nothing
+
+"""
+Function executes on item when it is removed from the LRUSet (before any other removals)
+"""
+on_pop(::Any) = nothing
 
 """
 Pushes `item` into the `LRUSet` (potentially pushing `size` over `capacity` temporarily), 
@@ -224,6 +239,7 @@ pushpop!(lru::LRUSet{T}, item::T) where T = begin
     # Check if item already exists
     if item in keys(lru.hash_map)
         unsafe_move_to_front!(lru.linked_list, lru.hash_map[item])
+        on_old_push(item)
         return Vector{T}()
     end
     
@@ -231,6 +247,7 @@ pushpop!(lru::LRUSet{T}, item::T) where T = begin
     item_node = _pushfirst!(lru.linked_list, item)
     push!(lru.hash_map, item => item_node)
     lru.size += item_size(item)
+    on_new_push(item)
 
     # Remove items from the cache to meet capacity
     removed_items = Vector{T}()
@@ -239,6 +256,7 @@ pushpop!(lru::LRUSet{T}, item::T) where T = begin
         pop!(lru.hash_map, popped_item)
         push!(removed_items, popped_item)
         lru.size -= item_size(popped_item)
+        on_pop(popped_item)
     end
     
     removed_items
