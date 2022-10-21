@@ -40,7 +40,9 @@ mutable struct LRUSet{T}
 end
 
 ################## DoublyLinkedList implementation #################
-Base.length(linked_list::DoublyLinkedList) = println("Get length"); linked_list.size
+Base.length(linked_list::DoublyLinkedList) = begin 
+    println("Get length"); linked_list.size
+end
 
 set_next!(::Nothing, ::Union{Node, Nothing}) = nothing
 set_next!(node::Node{T}, to::Union{Node{T}, Nothing}) where T = node.next = to; nothing 
