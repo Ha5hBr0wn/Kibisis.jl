@@ -241,15 +241,15 @@ pushpop!(lru::LRUSet{T}, item::T, metadata::Vararg) where T = begin
     # Check if item already exists
     if item in keys(lru.hash_map)
         unsafe_move_to_front!(lru.linked_list, lru.hash_map[item])
-        on_old_push(item, metadata)
+        on_old_push(item, metadata...)
         return Vector{T}()
     end
     
     # Push item into linked list and hash map
     item_node = _pushfirst!(lru.linked_list, item)
     push!(lru.hash_map, item => item_node)
-    on_new_push(item, metadata)
-    lru.size += item_size(item, metadata)
+    on_new_push(item, metadata...)
+    lru.size += item_size(item, metadata...)
     
     # Remove items from the cache to meet capacity
     removed_items = Vector{T}()
@@ -257,8 +257,8 @@ pushpop!(lru::LRUSet{T}, item::T, metadata::Vararg) where T = begin
         popped_item = pop!(lru.linked_list)
         pop!(lru.hash_map, popped_item)
         push!(removed_items, popped_item)
-        lru.size -= item_size(popped_item, metadata)
-        on_pop(popped_item, metadata)
+        lru.size -= item_size(popped_item, metadata...)
+        on_pop(popped_item, metadata...)
     end
     
     removed_items
