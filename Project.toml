@@ -1,7 +1,7 @@
 name = "Kibisis"
 uuid = "b7c0a452-59f3-4788-8baf-51dfb4e989a2"
 authors = ["haashimshah "]
-version = "0.1.0"
+version = "0.2.0"
 
 [compat]
 julia = "1.8"
