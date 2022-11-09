@@ -1,6 +1,6 @@
 # DoublyLinkedList
 Kibisis provides a doubly linked list implementation with `DoublyLinkedList{T}`. This 
-data type supports fast insertion at both ends as well as fast iteration. The type parameter `T` is the type of elements in the list. 
+data type supports fast insertion and deletion at both ends as well as fast iteration. The type parameter `T` is the type of elements in the list. 
 
 ## Usage
 ```
@@ -54,7 +54,7 @@ length(lru) # Returns 3, the number of elements in the set
 ```
 
 ## Advanced Usage
-By default the size of an item in the set is 1. However you can customize that behavior by adding a method to `Kibisis.item_size(x)` for your type of element. The method should take in the item and return a `Float64` object corresponding to its size.
+By default the size of an item in the set is 1. However you can customize that behavior by adding a method to `Kibisis.item_size(x)` for your type of element. The method should take in the item and return a `Float64` object corresponding to its size. This value should not change over the lifetime of the object in the `LRUSet`. 
 
 ```
 using Kibisis
@@ -69,3 +69,12 @@ popped_items = Kibisis.pushpop!(lru, 4)
 popped_items == [1, 4] # true
 ```
 Note that multiple items can be evicted at once because of the custom `item_size` method. Also note that they are evicted in order of least recently used. Finally note that the inserted item may be evicted in the same call to `pushpop!` if its size is larger than the `LRUSet`'s capacity. 
+
+One can also add methods to `on_new_push(x)`, `on_old_push(x)`, and `on_pop(x)` that do some kind of mutating operation (perhaps the creation and deletion of files on disk). These methods are executed on the items going into or leaving the `LRUSet`. `on_new_push` is executed when an item is used that is not currently in the `LRUSet`, and `on_old_push` is executed when the item already exists. By default all three of these do nothing. 
+
+It is worth noting that `on_new_push` is executed before computation of `item_size` and `on_pop` is executed after. This makes it easy to use `LRUSet` to implement a file system cache in which the set only contains the names of files. One would define `item_size` to return the size of those files, `on_new_push` to create the file, and `on_pop` to delete the file. (consider what would happen if you ran `item_size` before creating the file or after deleting the file)
+
+Finally each of `on_new_push`, `on_old_push`, and `on_pop` can take in a variable amount of additional arguments to aid in their mutating operations. These arguments are then passed in as additonal arguments to `pushpop!` and will be propogated to these other methods. Note that if you use additional arguments for even one of the above, you will need to specify them in the signature of any others that you define even if the arguments are not used. In the example of creating a file system cache one would pass the file name as well as the file contents to `pushpop!`. Those file contents would be used in `on_new_push` (to write the file), but would not be used in `on_pop`. `on_old_push` would not need to be defined for this use case. 
+
+It is worth noting that the additional arguments passed to `pushpop!` are not saved and so when an item is popped, `on_pop` is called with the current additional arguments. **Not** the arguments that were passed when that item was first placed into the `LRUSet`. 
+

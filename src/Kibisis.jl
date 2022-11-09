@@ -211,7 +211,7 @@ Maps an item that is put in an `LRUSet` to a `Float64`
 that represents the size it adds to the cache. Define this 
 method for your own types if you need something different than `1.0`
 """
-item_size(::Any, ::Vararg) = 1.0
+item_size(::Any) = 1.0
 
 """
 Function executes on item when it enters LRUSet and was not there before. 
@@ -249,7 +249,7 @@ pushpop!(lru::LRUSet{T}, item::T, metadata::Vararg) where T = begin
     item_node = _pushfirst!(lru.linked_list, item)
     push!(lru.hash_map, item => item_node)
     on_new_push(item, metadata...)
-    lru.size += item_size(item, metadata...)
+    lru.size += item_size(item)
     
     # Remove items from the cache to meet capacity
     removed_items = Vector{T}()
@@ -257,7 +257,7 @@ pushpop!(lru::LRUSet{T}, item::T, metadata::Vararg) where T = begin
         popped_item = pop!(lru.linked_list)
         pop!(lru.hash_map, popped_item)
         push!(removed_items, popped_item)
-        lru.size -= item_size(popped_item, metadata...)
+        lru.size -= item_size(popped_item)
         on_pop(popped_item, metadata...)
     end
     
