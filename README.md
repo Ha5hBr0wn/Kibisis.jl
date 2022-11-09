@@ -2,6 +2,8 @@
 Kibisis provides a doubly linked list implementation with `DoublyLinkedList{T}`. This 
 data type supports fast insertion and deletion at both ends as well as fast iteration. The type parameter `T` is the type of elements in the list. 
 
+Check out `Deque` in [DataStructures.jl](https://juliacollections.github.io/DataStructures.jl/stable/deque/) as it is likely better for your use case. This interface is primarily defined only for the implementation of `LRUSet` seen below. 
+
 ## Usage
 ```
 using Kibisis
